@@ -7,6 +7,8 @@ import heroImage from '@assets/generated_images/modern_dark_gym_interior_with_ne
 import patternImage from '@assets/generated_images/sporty_abstract_geometric_pattern_dark_neon_green.png';
 import { useApp } from "@/lib/store";
 
+import realGymBg from '@assets/1168-gym-city-pescara-a-s-d-img-Jspho_1770023684389.jpeg';
+
 export default function Home() {
   const { courses } = useApp();
 
@@ -19,12 +21,12 @@ export default function Home() {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <img 
-            src={heroImage} 
+            src={realGymBg} 
             alt="Gym Hero" 
-            className="w-full h-full object-cover opacity-60"
+            className="w-full h-full object-cover opacity-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
-          <div className="absolute inset-0 bg-black/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
 
         {/* Content */}
@@ -32,9 +34,9 @@ export default function Home() {
           <Badge variant="outline" className="mb-6 border-primary text-primary px-4 py-1 text-sm font-bold tracking-widest uppercase bg-black/50 backdrop-blur">
             Welcome to the future of fitness
           </Badge>
-          <h1 className="text-5xl md:text-7xl lg:text-9xl font-display font-black text-white uppercase italic tracking-tighter mb-6 neon-text drop-shadow-2xl">
-            Train <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Hard</span><br />
-            Live <span className="text-white">Strong</span>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-black text-white uppercase italic tracking-tighter mb-6 neon-text drop-shadow-2xl leading-none px-2">
+            I NOSTRI PREZZI <span className="text-primary">ATTIRANO</span>,<br />
+            MA È LA NOSTRA ESSENZA A <span className="text-white">CONQUISTARE</span>
           </h1>
           <p className="text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
             Scopri i nostri corsi esclusivi a Pescara. <br/>
@@ -42,7 +44,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/calendar">
-              <Button size="lg" className="h-14 px-8 text-lg font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-black border-none hover:scale-105 transition-transform shadow-[0_0_20px_rgba(204,255,0,0.4)]">
+              <Button size="lg" className="h-14 px-8 text-lg font-bold uppercase tracking-wider bg-primary hover:bg-primary/90 text-black border-none hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,165,0,0.4)]">
                 Prenota Ora
               </Button>
             </Link>

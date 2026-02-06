@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
+import realGymBg from '@assets/1168-gym-city-pescara-a-s-d-img-Jspho_1770023684389.jpeg';
+
 export default function LoginPage() {
   const { login } = useApp();
   const [, setLocation] = useLocation();
@@ -32,19 +34,19 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">
-       <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0">
           <img 
-            src={heroImage} 
+            src={realGymBg} 
             alt="Background" 
-            className="w-full h-full object-cover opacity-20 blur-sm"
+            className="w-full h-full object-cover opacity-30 blur-sm"
           />
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/70"></div>
         </div>
 
       <Card className="w-[400px] border-white/10 bg-card/80 backdrop-blur-xl relative z-10 shadow-2xl">
         <CardHeader className="text-center pb-2">
           <div className="flex justify-center mb-4">
-            <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-primary shadow-[0_0_20px_rgba(204,255,0,0.4)] bg-black">
+            <div className="h-20 w-20 rounded-full overflow-hidden border-2 border-primary shadow-[0_0_20px_rgba(255,165,0,0.4)] bg-black">
               <img src={logoImg} alt="Gym City Logo" className="h-full w-full object-cover" />
             </div>
           </div>
