@@ -62,7 +62,7 @@ export default function Home() {
         <div className="flex items-center gap-12 animate-infinite-scroll text-xl font-display font-bold uppercase italic tracking-tighter">
           {[...Array(10)].map((_, i) => (
             <span key={i} className="flex items-center gap-4">
-              <Zap className="h-6 w-6 fill-black" /> NO PAIN NO GAIN <Zap className="h-6 w-6 fill-black" /> JOIN THE REVOLUTION
+              <Zap className="h-6 w-6 fill-black" /> LA VERA PALESTRA <Zap className="h-6 w-6 fill-black" /> ACCESSIBILE A TUTTI
             </span>
           ))}
         </div>
