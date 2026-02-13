@@ -18,6 +18,7 @@ import { it } from 'date-fns/locale';
 import { Clock, User as UserIcon, CheckCircle2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocation } from 'wouter';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const DAYS_MAP: Record<string, number> = {
   'Lunedì': 1,
@@ -28,6 +29,29 @@ const DAYS_MAP: Record<string, number> = {
 };
 
 const DAYS = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì'];
+
+const dayVariants = {
+  initial: { opacity: 0, x: 30 },
+  animate: { 
+    opacity: 1, 
+    x: 0,
+    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }
+  },
+  exit: { 
+    opacity: 0, 
+    x: -30,
+    transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }
+  }
+};
+
+const cardVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }
+  })
+};
 
 export default function CalendarPage() {
   const { schedule, courses, bookClass, user, bookings } = useApp();
