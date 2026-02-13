@@ -285,14 +285,21 @@ export default function CalendarPage() {
                   )}
                 </CardContent>
               </Card>
+            </motion.div>
             );
           })}
-        </div>
+        </motion.div>
+      </AnimatePresence>
         
         {filteredSchedule.length === 0 && (
-          <div className="text-center py-20 text-muted-foreground">
+          <motion.div 
+            key={`empty-${selectedDay}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-20 text-muted-foreground"
+          >
             <p className="text-xl">Nessun corso programmato per questo giorno.</p>
-          </div>
+          </motion.div>
         )}
       </Tabs>
     </div>
