@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import User from '../models/User';
-import Course from '../models/Course';
-import Schedule from '../models/Schedule';
+import User from './models/User';
+import Course from './models/Course';
+import Schedule from './models/Schedule';
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/gymcity';
 
