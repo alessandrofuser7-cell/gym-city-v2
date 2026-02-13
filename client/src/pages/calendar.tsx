@@ -168,14 +168,8 @@ export default function CalendarPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredSchedule.map((slot, index) => {
-              const course = getCourseDetails(slot.courseId);
               const isBooked = user && bookings.some(b => b.scheduleId === slot.id);
-              const currentBookingsCount = bookings.filter(b => b.scheduleId === slot.id).length;
-              const remainingSpots = slot.capacity - currentBookingsCount;
-              const isFull = remainingSpots <= 0;
               const canBookNow = isBookingAllowedForDay(selectedDay);
-              
-              if (!course) return null;
 
               return (
                 <motion.div
@@ -187,10 +181,10 @@ export default function CalendarPage() {
                 >
                   <Card className={cn(
                     "group border-l-4 border-t-0 border-r-0 border-b-0 bg-card hover:bg-card/80 transition-all duration-300 overflow-hidden relative h-full",
-                    isBooked ? "border-l-green-500 bg-green-950/10" : `border-l-${course.color.replace('bg-', '')}`,
+                    isBooked ? "border-l-green-500 bg-green-950/10" : "",
                     !canBookNow && "opacity-75 grayscale-[0.5]"
                   )}>
-                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${course.color}`} />
+                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${slot.courseColor || 'bg-primary'}`} />
                     
                     <CardContent className="p-6 relative">
                       <div className="flex justify-between items-start mb-2">
@@ -200,11 +194,9 @@ export default function CalendarPage() {
                         </div>
                         {isBooked ? (
                       <Badge className="bg-green-500 text-black font-bold uppercase">Prenotato</Badge>
-                    ) : isFull ? (
-                      <Badge variant="destructive" className="font-bold uppercase">Esaurito</Badge>
                     ) : canBookNow ? (
                       <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5">
-                        {remainingSpots} posti disponibili
+                        {slot.capacity} posti
                       </Badge>
                     ) : (
                       <Badge variant="secondary" className="text-[10px] uppercase font-bold bg-white/5">Non Prenotabile</Badge>
