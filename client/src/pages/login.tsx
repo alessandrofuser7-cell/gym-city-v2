@@ -2,46 +2,49 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useApp } from "@/lib/store";
 import { useLocation } from "wouter";
-import { Dumbbell } from "lucide-react";
-import heroImage from '@assets/generated_images/modern_dark_gym_interior_with_neon_green_lighting.png';
-
-import logoImg from '@assets/palestra-gym-city-pescara_1769876975532.jpg';
+import { Loader2, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 
+import logoImg from '@assets/palestra-gym-city-pescara_1769876975532.jpg';
 import realGymBg from '@assets/1168-gym-city-pescara-a-s-d-img-Jspho_1770023684389.jpeg';
 
 export default function LoginPage() {
   const { login } = useApp();
   const [, setLocation] = useLocation();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (isAdmin: boolean) => {
-    login(isAdmin);
-    setLocation('/');
-  };
-
-  const handleManualLogin = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === "admin" && password === "admin") {
-      handleLogin(true);
-    } else if (username.length > 0 && password.length > 0) {
-      handleLogin(false);
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const success = await login(email, password);
+      if (success) {
+        setLocation('/');
+      }
+    } catch (err) {
+      setError("Errore di connessione");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-background">
       <div className="absolute inset-0 z-0">
-          <img 
-            src={realGymBg} 
-            alt="Background" 
-            className="w-full h-full object-cover opacity-30 blur-sm"
-          />
-          <div className="absolute inset-0 bg-black/70"></div>
-        </div>
+        <img 
+          src={realGymBg} 
+          alt="Background" 
+          className="w-full h-full object-cover opacity-30 blur-sm"
+        />
+        <div className="absolute inset-0 bg-black/70"></div>
+      </div>
 
       <Card className="w-[400px] border-white/10 bg-card/80 backdrop-blur-xl relative z-10 shadow-2xl">
         <CardHeader className="text-center pb-2">
@@ -54,16 +57,26 @@ export default function LoginPage() {
           <CardDescription className="text-lg text-primary">Inserisci le credenziali fornite dalla palestra</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-6">
-          <form onSubmit={handleManualLogin} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+                <AlertCircle className="h-4 w-4" />
+                {error}
+              </div>
+            )}
+            
             <div className="space-y-2">
-              <Label htmlFor="username">Nome Utente</Label>
+              <Label htmlFor="email">Email</Label>
               <Input 
-                id="username" 
-                placeholder="Username" 
+                id="email" 
+                type="email"
+                placeholder="tuaemail@esempio.com" 
                 className="bg-white/5 border-white/10" 
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={isLoading}
+                data-testid="login-email-input"
               />
             </div>
             <div className="space-y-2">
@@ -76,32 +89,38 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={isLoading}
+                data-testid="login-password-input"
               />
             </div>
-            <Button type="submit" className="w-full bg-primary text-black font-bold uppercase h-12">
-              Accedi
+            <Button 
+              type="submit" 
+              className="w-full bg-primary text-black font-bold uppercase h-12"
+              disabled={isLoading}
+              data-testid="login-submit-btn"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Accesso in corso...
+                </>
+              ) : (
+                'Accedi'
+              )}
             </Button>
           </form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-white/10" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">Demo Access</span>
+        </CardContent>
+        <CardFooter className="flex-col gap-4">
+          <p className="text-center text-xs text-muted-foreground px-4">
+            In caso di smarrimento credenziali, rivolgersi alla reception.
+          </p>
+          <div className="w-full p-3 bg-white/5 rounded-lg border border-white/10">
+            <p className="text-xs text-muted-foreground text-center mb-2">Credenziali Demo:</p>
+            <div className="text-xs text-center space-y-1">
+              <p><span className="text-primary">Admin:</span> admin@gymcity.com / admin123</p>
+              <p><span className="text-primary">Utente:</span> mario.rossi@example.com / user123</p>
             </div>
           </div>
-
-           <Button 
-            variant="ghost"
-            className="w-full text-muted-foreground hover:text-white text-xs"
-            onClick={() => handleLogin(true)}
-          >
-            Accesso Rapido Admin (Demo)
-          </Button>
-        </CardContent>
-        <CardFooter className="justify-center text-center text-xs text-muted-foreground px-8">
-          In caso di smarrimento credenziali, rivolgersi alla reception.
         </CardFooter>
       </Card>
     </div>
