@@ -204,7 +204,7 @@ export default function CalendarPage() {
                   </div>
                   
                   <h3 className="text-2xl font-display font-bold uppercase italic mb-2 text-white group-hover:text-primary transition-colors">
-                    {course.name}
+                    {slot.courseName}
                   </h3>
                   
                   <div className="flex items-center gap-4 mb-6">
@@ -213,11 +213,23 @@ export default function CalendarPage() {
                       <span>{slot.instructor}</span>
                     </div>
                     <Badge variant="outline" className="text-xs border-white/10">
-                      {course.intensity} Intensity
+                      {slot.courseIntensity} Intensity
                     </Badge>
                   </div>
 
-                  {!canBookNow ? (
+                  {!user && canBookNow ? (
+                    <Button 
+                      className="w-full bg-primary text-black font-bold uppercase tracking-wider"
+                      onClick={() => setLocation('/login')}
+                    >
+                      Accedi per Prenotare
+                    </Button>
+                  ) : !isSubscriptionValid && canBookNow ? (
+                    <div className="flex items-center gap-2 text-xs text-red-500/80 bg-red-500/5 p-2 rounded border border-red-500/10">
+                      <AlertCircle className="h-3 w-3" />
+                      Abbonamento scaduto - Rinnova per prenotare
+                    </div>
+                  ) : !canBookNow ? (
                     <div className="flex items-center gap-2 text-xs text-amber-500/80 bg-amber-500/5 p-2 rounded border border-amber-500/10">
                       <AlertCircle className="h-3 w-3" />
                       Prenotazioni aperte solo il giorno precedente
@@ -226,18 +238,16 @@ export default function CalendarPage() {
                     <Dialog open={openBookingId === slot.id} onOpenChange={(open) => setOpenBookingId(open ? slot.id : null)}>
                       <DialogTrigger asChild>
                         <Button 
-                          disabled={!!isBooked || isFull}
+                          disabled={!!isBooked}
                           className={cn(
                             "w-full font-bold uppercase tracking-wider",
-                            (isBooked || isFull)
+                            isBooked
                               ? "bg-white/10 text-gray-500 cursor-not-allowed hover:bg-white/10" 
                               : "bg-primary text-black hover:bg-primary/90 hover:scale-[1.02] transition-transform shadow-[0_0_15px_rgba(204,255,0,0.2)]"
                           )}
                         >
                           {isBooked ? (
                             <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Iscritto</span>
-                          ) : isFull ? (
-                            "Posti Esauriti"
                           ) : (
                             "Prenota per Domani"
                           )}
@@ -255,7 +265,7 @@ export default function CalendarPage() {
                           <div className="bg-white/5 p-4 rounded-lg border border-white/10 space-y-2">
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Corso:</span>
-                              <span className="font-bold text-white">{course.name}</span>
+                              <span className="font-bold text-white">{slot.courseName}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Istruttore:</span>
@@ -265,17 +275,17 @@ export default function CalendarPage() {
                               <span className="text-muted-foreground">Orario:</span>
                               <span className="text-white">{selectedDay}, {slot.time}</span>
                             </div>
-                            <div className="flex justify-between pt-2 border-t border-white/5">
-                              <span className="text-muted-foreground">Posti rimanenti:</span>
-                              <span className="text-primary font-bold">{remainingSpots}</span>
-                            </div>
                           </div>
                         </div>
 
                         <DialogFooter>
                           <Button variant="ghost" onClick={() => setOpenBookingId(null)}>Annulla</Button>
-                          <Button className="bg-primary text-black font-bold uppercase" onClick={() => handleBook(slot.id)}>
-                            Conferma Prenotazione
+                          <Button 
+                            className="bg-primary text-black font-bold uppercase" 
+                            onClick={() => handleBook(slot.id)}
+                            disabled={isBooking}
+                          >
+                            {isBooking ? 'Prenotazione...' : 'Conferma Prenotazione'}
                           </Button>
                         </DialogFooter>
                       </DialogContent>
