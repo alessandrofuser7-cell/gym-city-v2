@@ -445,7 +445,8 @@ class GymCityAPITester:
         if failed_tests:
             print(f"\n❌ FAILED TESTS ({len(failed_tests)}):")
             for test in failed_tests:
-                print(f"   • {test['test_name']} - {test.get('error', f'Status {test.get('actual_status', 'unknown')}')}") 
+                error_msg = test.get('error', f"Status {test.get('actual_status', 'unknown')}")
+                print(f"   • {test['test_name']} - {error_msg}") 
         
         return pass_rate
 
