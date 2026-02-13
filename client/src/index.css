@@ -64,3 +64,16 @@
 .neon-border {
   box-shadow: 0 0 10px rgba(255, 165, 0, 0.2);
 }
+
+@keyframes infinite-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-infinite-scroll {
+  animation: infinite-scroll 20s linear infinite;
+}
