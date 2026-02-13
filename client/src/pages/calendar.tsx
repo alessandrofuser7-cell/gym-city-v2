@@ -152,32 +152,47 @@ export default function CalendarPage() {
           ))}
         </TabsList>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSchedule.map((slot) => {
-            const course = getCourseDetails(slot.courseId);
-            const isBooked = user && bookings.some(b => b.scheduleId === slot.id);
-            const currentBookingsCount = bookings.filter(b => b.scheduleId === slot.id).length;
-            const remainingSpots = slot.capacity - currentBookingsCount;
-            const isFull = remainingSpots <= 0;
-            const canBookNow = isBookingAllowedForDay(selectedDay);
-            
-            if (!course) return null;
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={selectedDay}
+            variants={dayVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {filteredSchedule.map((slot, index) => {
+              const course = getCourseDetails(slot.courseId);
+              const isBooked = user && bookings.some(b => b.scheduleId === slot.id);
+              const currentBookingsCount = bookings.filter(b => b.scheduleId === slot.id).length;
+              const remainingSpots = slot.capacity - currentBookingsCount;
+              const isFull = remainingSpots <= 0;
+              const canBookNow = isBookingAllowedForDay(selectedDay);
+              
+              if (!course) return null;
 
-            return (
-              <Card key={slot.id} className={cn(
-                "group border-l-4 border-t-0 border-r-0 border-b-0 bg-card hover:bg-card/80 transition-all duration-300 overflow-hidden relative",
-                isBooked ? "border-l-green-500 bg-green-950/10" : `border-l-${course.color.replace('bg-', '')}`,
-                !canBookNow && "opacity-75 grayscale-[0.5]"
-              )}>
-                 <div className={`absolute left-0 top-0 bottom-0 w-1 ${course.color}`} />
-                 
-                <CardContent className="p-6 relative">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-2 text-muted-foreground font-mono text-sm">
-                      <Clock className="h-4 w-4 text-primary" />
-                      <span>{slot.time}</span>
-                    </div>
-                    {isBooked ? (
+              return (
+                <motion.div
+                  key={slot.id}
+                  variants={cardVariants}
+                  initial="initial"
+                  animate="animate"
+                  custom={index}
+                >
+                  <Card className={cn(
+                    "group border-l-4 border-t-0 border-r-0 border-b-0 bg-card hover:bg-card/80 transition-all duration-300 overflow-hidden relative h-full",
+                    isBooked ? "border-l-green-500 bg-green-950/10" : `border-l-${course.color.replace('bg-', '')}`,
+                    !canBookNow && "opacity-75 grayscale-[0.5]"
+                  )}>
+                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${course.color}`} />
+                    
+                    <CardContent className="p-6 relative">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-2 text-muted-foreground font-mono text-sm">
+                          <Clock className="h-4 w-4 text-primary" />
+                          <span>{slot.time}</span>
+                        </div>
+                        {isBooked ? (
                       <Badge className="bg-green-500 text-black font-bold uppercase">Prenotato</Badge>
                     ) : isFull ? (
                       <Badge variant="destructive" className="font-bold uppercase">Esaurito</Badge>
