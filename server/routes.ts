@@ -1,16 +1,28 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { type Server } from "http";
+import { connectDB } from "./config/db";
+import authRoutes from "./routes/auth";
+import coursesRoutes from "./routes/courses";
+import scheduleRoutes from "./routes/schedule";
+import bookingsRoutes from "./routes/bookings";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // put application routes here
-  // prefix all routes with /api
+  // Connect to MongoDB
+  await connectDB();
 
-  // use storage to perform CRUD operations on the storage interface
-  // e.g. storage.insertUser(user) or storage.getUserByUsername(username)
+  // Register API routes
+  app.use("/api/auth", authRoutes);
+  app.use("/api/courses", coursesRoutes);
+  app.use("/api/schedule", scheduleRoutes);
+  app.use("/api/bookings", bookingsRoutes);
+
+  // Health check
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
 
   return httpServer;
 }
