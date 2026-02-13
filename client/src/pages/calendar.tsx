@@ -54,9 +54,10 @@ const cardVariants = {
 };
 
 export default function CalendarPage() {
-  const { schedule, courses, bookClass, user, bookings } = useApp();
+  const { schedule, bookClass, user, bookings, isSubscriptionValid } = useApp();
   const [openBookingId, setOpenBookingId] = useState<string | null>(null);
   const [, setLocation] = useLocation();
+  const [isBooking, setIsBooking] = useState(false);
 
   // Current Date logic
   const today = startOfDay(new Date());
@@ -90,17 +91,22 @@ export default function CalendarPage() {
     .filter(s => s.day === selectedDay)
     .sort((a, b) => a.time.localeCompare(b.time));
 
-  const handleBook = (scheduleId: string) => {
+  const handleBook = async (scheduleId: string) => {
     if (!user) {
       setLocation('/login');
       return;
     }
+    
+    if (!isSubscriptionValid) {
+      return;
+    }
+    
+    setIsBooking(true);
     const bookingDate = format(targetBookingDate, 'yyyy-MM-dd');
-    bookClass(scheduleId, bookingDate);
+    await bookClass(scheduleId, bookingDate);
+    setIsBooking(false);
     setOpenBookingId(null);
   };
-
-  const getCourseDetails = (courseId: string) => courses.find(c => c.id === courseId);
 
   // Check if a day is the one currently allowed for booking
   const isBookingAllowedForDay = (dayName: string) => {
