@@ -163,23 +163,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
+      console.log('Attempting login for:', email);
       const res = await fetch(`/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
 
+      console.log('Login response status:', res.status);
+      
+      const data = await res.json();
+      console.log('Login response data:', data);
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({ message: 'Errore sconosciuto' }));
         toast({
           title: "Errore",
-          description: data.message || "Credenziali non valide",
+          description: data.message || `Errore ${res.status}`,
           variant: "destructive",
         });
         return false;
       }
 
-      const data = await res.json();
       localStorage.setItem('gymcity_token', data.token);
       setUser(data.user);
       await loadUserBookings();
@@ -194,7 +198,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       console.error('Login error:', error);
       toast({
         title: "Errore",
-        description: "Impossibile connettersi al server. Riprova.",
+        description: `Errore: ${error instanceof Error ? error.message : 'Sconosciuto'}`,
         variant: "destructive",
       });
       return false;
