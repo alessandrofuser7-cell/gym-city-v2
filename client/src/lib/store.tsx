@@ -213,7 +213,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const getBookingCount = async (scheduleId: string, date: string): Promise<number> => {
     try {
-      const res = await fetch(`${API_URL}/api/bookings/count/${scheduleId}/${date}`);
+      const res = await fetch(`/api/bookings/count/${scheduleId}/${date}`);
       if (res.ok) {
         const data = await res.json();
         return data.count;
