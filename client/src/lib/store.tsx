@@ -83,12 +83,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
-    return fetch(`${API_URL}${url}`, { ...options, headers });
+    return fetch(url, { ...options, headers });
   };
 
   const loadCourses = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/courses`);
+      const res = await fetch('/api/courses');
       if (res.ok) {
         const data = await res.json();
         setCourses(data);
@@ -100,7 +100,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const loadSchedule = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/api/schedule`);
+      const res = await fetch('/api/schedule');
       if (res.ok) {
         const data = await res.json();
         setSchedule(data);
