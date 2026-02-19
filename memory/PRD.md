@@ -10,7 +10,7 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - **Autenticazione**: JWT + bcrypt
 
 ## User Personas
-1. **Admin**: Gestisce utenti, corsi, orari. Crea/modifica/disattiva account
+1. **Admin**: Gestisce utenti, corsi, orari. Crea/modifica/disattiva account, gestisce scadenze abbonamento
 2. **Utente**: Prenota corsi (max 1/giorno), visualizza proprie prenotazioni
 3. **Istruttore**: Visualizza prenotazioni giornaliere, registra presenze
 
@@ -23,6 +23,7 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - [x] Protezione API con middleware
 - [x] Prenotazione max 1 corso al giorno
 - [x] Prenotazioni aperte solo giorno precedente
+- [x] Dashboard admin completa
 
 ## Implemented Features (Feb 2026)
 - Backend completo con MongoDB
@@ -33,14 +34,25 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - Calendario interattivo con transizioni
 - Banner scorrevole "LA VERA PALESTRA - ACCESSIBILE A TUTTI"
 - Transizioni pagina con Framer Motion
+- **Dashboard Admin** con:
+  - Statistiche utenti (totali, attivi, in scadenza, scaduti)
+  - Lista utenti con ruoli e scadenze
+  - Form creazione nuovo utente
+  - Form modifica utente (nome, password, ruolo, scadenza)
+  - Attivazione/disattivazione utenti
+  - Ricerca utenti
+  - Lista corsi
 
 ## API Endpoints
+### Auth
 - POST /api/auth/login - Login utente
 - GET /api/auth/me - Profilo utente corrente
 - POST /api/auth/users - Crea utente (admin)
 - GET /api/auth/users - Lista utenti (admin)
 - PUT /api/auth/users/:id - Modifica utente (admin)
 - DELETE /api/auth/users/:id - Disattiva utente (admin)
+
+### Corsi & Prenotazioni
 - GET /api/courses - Lista corsi
 - GET /api/schedule - Orario settimanale
 - POST /api/bookings - Crea prenotazione
@@ -52,16 +64,11 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - Utente: mario.rossi@example.com / user123
 - Istruttore: gianluca@gymcity.com / instructor123
 
-## Backlog P0 (Prossimi step)
-- [ ] Dashboard admin completa per gestione utenti
-- [ ] Form creazione nuovo utente
-- [ ] Visualizzazione/modifica scadenza abbonamento
-- [ ] Notifiche scadenza abbonamento
-
 ## Backlog P1
 - [ ] Email reminder prenotazioni
 - [ ] Report presenze mensili
 - [ ] Statistiche frequenza corsi
+- [ ] Notifiche scadenza abbonamento
 
 ## Backlog P2
 - [ ] App mobile (PWA)
