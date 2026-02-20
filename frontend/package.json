@@ -1,0 +1,6 @@
+{
+  "name": "gymcity-frontend",
+  "scripts": {
+    "start": "cd /app && MONGO_URI=mongodb://localhost:27017/gymcity PORT=3000 npm run dev"
+  }
+}
