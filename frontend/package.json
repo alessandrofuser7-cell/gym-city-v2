@@ -1,8 +1,0 @@
-{
-  "name": "gymcity-frontend",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "cd /app && npm run dev"
-  },
-  "dependencies": {}
-}
