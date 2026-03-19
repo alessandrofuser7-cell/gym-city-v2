@@ -137,8 +137,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <h2 className="text-xl font-display font-bold uppercase mb-4">
             A.S.D. Gym <span className="text-primary">City</span>
           </h2>
-          <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-            La tua palestra di riferimento a Pescara. Allenati con i migliori professionisti in un ambiente moderno e dinamico.
+          <p className="text-muted-foreground mb-4 max-w-2xl mx-auto">
+            Associazione sportiva per praticare fitness a livello amatoriale, in un contesto anticommerciale, familiare, socializzante ed informale, senza inutili scenografie ed apparenze, aperto a tutti, senza speculazioni e distinzioni sociali ed a prezzi onesti.
           </p>
           
           {/* Contatti e Social */}
