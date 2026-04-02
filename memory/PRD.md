@@ -5,9 +5,16 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 
 ## Architettura
 - **Frontend**: React + TypeScript + TailwindCSS + Framer Motion
-- **Backend**: Express.js + TypeScript
+- **Backend**: Express.js + TypeScript + FastAPI (proxy)
 - **Database**: MongoDB (mongoose)
 - **Autenticazione**: JWT + bcrypt
+
+## Contatti Palestra
+- **Indirizzo**: Strada della Bonifica, 126 - 65129 Pescara (PE)
+- **Email**: gymcityasd@gmail.com
+- **Telefono**: 085.693819
+- **Instagram**: @asd_gym_city_pescara
+- **Facebook**: Gym City Pescara
 
 ## User Personas
 1. **Admin**: Gestisce utenti, corsi, orari. Crea/modifica/disattiva account, gestisce scadenze abbonamento
@@ -15,7 +22,7 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 3. **Istruttore**: Visualizza prenotazioni giornaliere, registra presenze
 
 ## Core Requirements
-- [x] Autenticazione con JWT
+- [x] Autenticazione con JWT (secret sicuro in variabile ambiente)
 - [x] Password crittografate con bcrypt (salt 12)
 - [x] 3 ruoli: admin, user, instructor
 - [x] Solo admin può creare account
@@ -24,24 +31,22 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - [x] Prenotazione max 1 corso al giorno
 - [x] Prenotazioni aperte solo giorno precedente
 - [x] Dashboard admin completa
+- [x] Design responsive (mobile-first)
+- [x] Credenziali demo rimosse da login
 
-## Implemented Features (Feb 2026)
+## Implemented Features (Apr 2026)
 - Backend completo con MongoDB
-- Sistema autenticazione JWT
+- Sistema autenticazione JWT con secret sicuro
 - 12 corsi precaricati
 - 26 lezioni settimanali
-- Pagina login con validazione
+- 5 istruttori: Gianluca, Andrea, Sisto, Luca, Hanna
+- Pagina login senza credenziali demo
 - Calendario interattivo con transizioni
 - Banner scorrevole "LA VERA PALESTRA - ACCESSIBILE A TUTTI"
 - Transizioni pagina con Framer Motion
-- **Dashboard Admin** con:
-  - Statistiche utenti (totali, attivi, in scadenza, scaduti)
-  - Lista utenti con ruoli e scadenze
-  - Form creazione nuovo utente
-  - Form modifica utente (nome, password, ruolo, scadenza)
-  - Attivazione/disattivazione utenti
-  - Ricerca utenti
-  - Lista corsi
+- Dashboard Admin completa
+- Footer con indirizzo, contatti e social
+- Design responsive testato su mobile
 
 ## API Endpoints
 ### Auth
@@ -59,16 +64,23 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - GET /api/bookings/my - Mie prenotazioni
 - DELETE /api/bookings/:id - Cancella prenotazione
 
-## Credenziali Demo
+## Credenziali (da cambiare in produzione)
 - Admin: admin@gymcity.com / admin123
-- Utente: mario.rossi@example.com / user123
-- Istruttore: gianluca@gymcity.com / instructor123
+- Utente test: mario.rossi@example.com / user123
+
+## Test Completati
+- [x] Login admin
+- [x] Dashboard admin
+- [x] Creazione utente
+- [x] Login utente
+- [x] Calendario corsi
+- [x] Prenotazione corso
+- [x] Responsive mobile (tutte le pagine)
 
 ## Backlog P1
-- [ ] Email reminder prenotazioni
+- [ ] Notifiche scadenza abbonamento
 - [ ] Report presenze mensili
 - [ ] Statistiche frequenza corsi
-- [ ] Notifiche scadenza abbonamento
 
 ## Backlog P2
 - [ ] App mobile (PWA)
