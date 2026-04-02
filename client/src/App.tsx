@@ -11,6 +11,7 @@ import CalendarPage from "@/pages/calendar";
 import ProfilePage from "@/pages/profile";
 import AdminPage from "@/pages/admin";
 import LoginPage from "@/pages/login";
+import ChangePasswordPage from "@/pages/change-password";
 
 const pageVariants = {
   initial: {
@@ -69,6 +70,9 @@ function Router() {
           </Route>
           <Route path="/login">
             <AnimatedPage><LoginPage /></AnimatedPage>
+          </Route>
+          <Route path="/change-password">
+            <ChangePasswordPage />
           </Route>
           <Route>
             <AnimatedPage><NotFound /></AnimatedPage>

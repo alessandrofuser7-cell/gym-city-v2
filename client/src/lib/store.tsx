@@ -10,6 +10,7 @@ export type User = {
   role: 'user' | 'admin' | 'instructor';
   subscriptionExpiry: string | null;
   phone?: string;
+  mustChangePassword?: boolean;
 };
 
 export type Course = {
@@ -161,7 +162,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     init();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; mustChangePassword?: boolean }> => {
     try {
       console.log('Attempting login for:', email);
       const res = await fetch(`/api/auth/login`, {
@@ -181,19 +182,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           description: data.message || `Errore ${res.status}`,
           variant: "destructive",
         });
-        return false;
+        return { success: false };
       }
 
       localStorage.setItem('gymcity_token', data.token);
       setUser(data.user);
       await loadUserBookings();
 
+      if (data.user.mustChangePassword) {
+        toast({
+          title: "Cambio Password Richiesto",
+          description: "Devi cambiare la password prima di continuare.",
+          variant: "destructive",
+        });
+        return { success: true, mustChangePassword: true };
+      }
+
       toast({
         title: "Benvenuto!",
         description: `Accesso effettuato come ${data.user.role === 'admin' ? 'Amministratore' : data.user.role === 'instructor' ? 'Istruttore' : 'Utente'}`,
       });
 
-      return true;
+      return { success: true, mustChangePassword: false };
     } catch (error) {
       console.error('Login error:', error);
       toast({
@@ -201,7 +211,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         description: `Errore: ${error instanceof Error ? error.message : 'Sconosciuto'}`,
         variant: "destructive",
       });
-      return false;
+      return { success: false };
     }
   };
 

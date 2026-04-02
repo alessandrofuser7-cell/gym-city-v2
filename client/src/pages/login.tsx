@@ -24,9 +24,13 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
-      if (success) {
-        setLocation('/');
+      const result = await login(email, password);
+      if (result.success) {
+        if (result.mustChangePassword) {
+          setLocation('/change-password');
+        } else {
+          setLocation('/');
+        }
       }
     } catch (err) {
       setError("Errore di connessione");

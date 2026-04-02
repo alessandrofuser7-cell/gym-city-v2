@@ -8,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { 
   Users, Calendar, Settings, PlusCircle, UserPlus, Edit, Trash2, 
-  AlertTriangle, CheckCircle, XCircle, Search, Loader2, Save, X
+  AlertTriangle, CheckCircle, XCircle, Search, Loader2, Save, X,
+  Download, Clock, Bell
 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
@@ -42,6 +43,20 @@ type AdminUser = {
   createdAt: string;
 };
 
+type ExpiringUser = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subscriptionExpiry: string;
+};
+
+type ExpiringData = {
+  expiringIn7Days: ExpiringUser[];
+  expiringIn30Days: ExpiringUser[];
+  expired: ExpiringUser[];
+};
+
 export default function AdminPage() {
   const { user, courses, schedule } = useApp();
   const [, setLocation] = useLocation();
@@ -50,6 +65,8 @@ export default function AdminPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [expiringData, setExpiringData] = useState<ExpiringData | null>(null);
+  const [isBackingUp, setIsBackingUp] = useState(false);
   
   // Dialog states
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -85,9 +102,49 @@ export default function AdminPage() {
     }
   };
 
+  const fetchExpiringSubscriptions = async () => {
+    try {
+      const res = await fetch('/api/admin/expiring-subscriptions', {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setExpiringData(data);
+      }
+    } catch (error) {
+      console.error('Error fetching expiring subscriptions:', error);
+    }
+  };
+
+  const handleBackup = async () => {
+    setIsBackingUp(true);
+    try {
+      const res = await fetch('/api/admin/backup', {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      if (res.ok) {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `gymcity_backup_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        toast({ title: "Backup completato", description: "Il file è stato scaricato" });
+      }
+    } catch (error) {
+      toast({ title: "Errore", description: "Errore durante il backup", variant: "destructive" });
+    } finally {
+      setIsBackingUp(false);
+    }
+  };
+
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchUsers();
+      fetchExpiringSubscriptions();
     }
   }, [user]);
 
@@ -278,12 +335,23 @@ export default function AdminPage() {
           </h1>
           <p className="text-muted-foreground">Gestione utenti, corsi e abbonamenti.</p>
         </div>
-        <Button 
-          className="bg-primary text-black font-bold uppercase"
-          onClick={() => { resetForm(); setShowCreateDialog(true); }}
-        >
-          <UserPlus className="mr-2 h-4 w-4" /> Nuovo Utente
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            className="border-white/10"
+            onClick={handleBackup}
+            disabled={isBackingUp}
+          >
+            {isBackingUp ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
+            Backup
+          </Button>
+          <Button 
+            className="bg-primary text-black font-bold uppercase"
+            onClick={() => { resetForm(); setShowCreateDialog(true); }}
+          >
+            <UserPlus className="mr-2 h-4 w-4" /> Nuovo Utente
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -339,6 +407,9 @@ export default function AdminPage() {
         <TabsList className="bg-card/50 border border-white/10 mb-6">
           <TabsTrigger value="users" className="data-[state=active]:bg-primary data-[state=active]:text-black">
             <Users className="mr-2 h-4 w-4" /> Utenti
+          </TabsTrigger>
+          <TabsTrigger value="expiring" className="data-[state=active]:bg-primary data-[state=active]:text-black">
+            <Bell className="mr-2 h-4 w-4" /> Scadenze
           </TabsTrigger>
           <TabsTrigger value="courses" className="data-[state=active]:bg-primary data-[state=active]:text-black">
             <Settings className="mr-2 h-4 w-4" /> Corsi
@@ -448,6 +519,96 @@ export default function AdminPage() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="expiring">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Scaduti */}
+            <Card className="bg-card border-red-500/20">
+              <CardHeader>
+                <CardTitle className="font-display uppercase italic text-red-500 flex items-center gap-2">
+                  <XCircle className="h-5 w-5" /> Scaduti
+                </CardTitle>
+                <CardDescription>Abbonamenti già scaduti</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {expiringData?.expired.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">Nessun abbonamento scaduto</p>
+                ) : (
+                  <div className="space-y-3">
+                    {expiringData?.expired.map(u => (
+                      <div key={u.id} className="p-3 bg-red-500/10 rounded-lg border border-red-500/20">
+                        <p className="font-medium text-white">{u.name}</p>
+                        <p className="text-sm text-muted-foreground">{u.email}</p>
+                        {u.phone && <p className="text-sm text-muted-foreground">{u.phone}</p>}
+                        <p className="text-xs text-red-500 mt-1">
+                          Scaduto il {format(new Date(u.subscriptionExpiry), 'd MMM yyyy', { locale: it })}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* In scadenza 7 giorni */}
+            <Card className="bg-card border-amber-500/20">
+              <CardHeader>
+                <CardTitle className="font-display uppercase italic text-amber-500 flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5" /> Scadono in 7 giorni
+                </CardTitle>
+                <CardDescription>Richiede attenzione immediata</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {expiringData?.expiringIn7Days.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">Nessuno in scadenza</p>
+                ) : (
+                  <div className="space-y-3">
+                    {expiringData?.expiringIn7Days.map(u => (
+                      <div key={u.id} className="p-3 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                        <p className="font-medium text-white">{u.name}</p>
+                        <p className="text-sm text-muted-foreground">{u.email}</p>
+                        {u.phone && <p className="text-sm text-muted-foreground">{u.phone}</p>}
+                        <p className="text-xs text-amber-500 mt-1">
+                          Scade il {format(new Date(u.subscriptionExpiry), 'd MMM yyyy', { locale: it })}
+                          {' '}({differenceInDays(new Date(u.subscriptionExpiry), new Date())} giorni)
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* In scadenza 30 giorni */}
+            <Card className="bg-card border-yellow-500/20">
+              <CardHeader>
+                <CardTitle className="font-display uppercase italic text-yellow-500 flex items-center gap-2">
+                  <Clock className="h-5 w-5" /> Scadono in 30 giorni
+                </CardTitle>
+                <CardDescription>Da monitorare</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {expiringData?.expiringIn30Days.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">Nessuno in scadenza</p>
+                ) : (
+                  <div className="space-y-3">
+                    {expiringData?.expiringIn30Days.map(u => (
+                      <div key={u.id} className="p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                        <p className="font-medium text-white">{u.name}</p>
+                        <p className="text-sm text-muted-foreground">{u.email}</p>
+                        {u.phone && <p className="text-sm text-muted-foreground">{u.phone}</p>}
+                        <p className="text-xs text-yellow-500 mt-1">
+                          Scade il {format(new Date(u.subscriptionExpiry), 'd MMM yyyy', { locale: it })}
+                          {' '}({differenceInDays(new Date(u.subscriptionExpiry), new Date())} giorni)
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="courses">

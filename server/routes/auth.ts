@@ -36,7 +36,8 @@ router.post('/login', async (req, res: Response) => {
         role: user.role,
         avatar: user.avatar,
         subscriptionExpiry: user.subscriptionExpiry,
-        phone: user.phone
+        phone: user.phone,
+        mustChangePassword: user.mustChangePassword
       }
     });
   } catch (error) {
@@ -188,6 +189,10 @@ router.put('/change-password', authenticate, async (req: AuthRequest, res: Respo
       return res.status(400).json({ message: 'Password attuale e nuova sono richieste' });
     }
 
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'La nuova password deve avere almeno 6 caratteri' });
+    }
+
     const user = await User.findById(req.user!._id);
     if (!user) {
       return res.status(404).json({ message: 'Utente non trovato' });
@@ -199,6 +204,7 @@ router.put('/change-password', authenticate, async (req: AuthRequest, res: Respo
     }
 
     user.password = newPassword;
+    user.mustChangePassword = false;
     await user.save();
 
     res.json({ message: 'Password aggiornata con successo' });

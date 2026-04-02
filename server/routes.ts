@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth";
 import coursesRoutes from "./routes/courses";
 import scheduleRoutes from "./routes/schedule";
 import bookingsRoutes from "./routes/bookings";
+import adminRoutes from "./routes/admin";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -18,6 +19,7 @@ export async function registerRoutes(
   app.use("/api/courses", coursesRoutes);
   app.use("/api/schedule", scheduleRoutes);
   app.use("/api/bookings", bookingsRoutes);
+  app.use("/api/admin", adminRoutes);
 
   // Health check
   app.get("/api/health", (req, res) => {
