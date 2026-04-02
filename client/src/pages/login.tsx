@@ -110,17 +110,10 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex-col gap-4">
+        <CardFooter>
           <p className="text-center text-xs text-muted-foreground px-4">
             In caso di smarrimento credenziali, rivolgersi alla reception.
           </p>
-          <div className="w-full p-3 bg-white/5 rounded-lg border border-white/10">
-            <p className="text-xs text-muted-foreground text-center mb-2">Credenziali Demo:</p>
-            <div className="text-xs text-center space-y-1">
-              <p><span className="text-primary">Admin:</span> admin@gymcity.com / admin123</p>
-              <p><span className="text-primary">Utente:</span> mario.rossi@example.com / user123</p>
-            </div>
-          </div>
         </CardFooter>
       </Card>
     </div>
