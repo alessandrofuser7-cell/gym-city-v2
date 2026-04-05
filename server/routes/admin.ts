@@ -74,10 +74,10 @@ router.get('/expiring-subscriptions', authenticate, requireRole('admin'), async 
 router.get('/backup', authenticate, requireRole('admin'), async (req: AuthRequest, res: Response) => {
   try {
     // Get all data
-    const users = await User.find().select('-password');
-    const courses = await Course.find();
-    const schedules = await Schedule.find();
-    const bookings = await Booking.find();
+    const users = await User.find().select('-password').limit(1000);
+    const courses = await Course.find().limit(500);
+    const schedules = await Schedule.find().limit(1000);
+    const bookings = await Booking.find().limit(5000);
 
     const backup = {
       exportDate: new Date().toISOString(),

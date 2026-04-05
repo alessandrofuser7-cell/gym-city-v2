@@ -13,7 +13,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-EXPRESS_URL = "http://127.0.0.1:3000"
+EXPRESS_URL = os.environ.get("EXPRESS_URL", "http://127.0.0.1:3000")
 
 @app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def proxy_api(path: str, request: Request):

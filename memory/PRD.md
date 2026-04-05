@@ -100,4 +100,11 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - [x] Frontend: 100%
 - [x] Mobile responsive: 100%
 
-## Pronto per Deploy ✅
+## Pronto per Deploy
+
+### Fix deployment applicati (Apr 2026):
+- Rimosso MONGO_URI hardcoded da package.json start script
+- Aggiunto dotenv/config per caricamento variabili ambiente
+- Rimossi fallback hardcoded in server/config/db.ts e server/seed.ts
+- EXPRESS_URL nel proxy FastAPI ora da variabile ambiente
+- Limiti query aggiunti nelle route admin (backup)
