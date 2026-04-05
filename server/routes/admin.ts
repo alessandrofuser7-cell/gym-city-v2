@@ -4,6 +4,7 @@ import User from '../models/User';
 import Course from '../models/Course';
 import Schedule from '../models/Schedule';
 import Booking from '../models/Booking';
+import { sendSubscriptionExpiryReminder } from '../services/email';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
@@ -161,6 +162,51 @@ router.post('/backup/dump', authenticate, requireRole('admin'), async (req: Auth
   } catch (error) {
     console.error('Error creating MongoDB dump:', error);
     res.status(500).json({ message: 'Errore durante il backup MongoDB' });
+  }
+});
+
+// Send expiry notifications manually
+router.post('/send-expiry-notifications', authenticate, requireRole('admin'), async (req: AuthRequest, res: Response) => {
+  try {
+    const now = new Date();
+    const in7Days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    // Find users expiring in 7 days or already expired (within last 7 days)
+    const usersToNotify = await User.find({
+      role: 'user',
+      isActive: true,
+      subscriptionExpiry: { 
+        $gte: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), 
+        $lte: in7Days 
+      }
+    });
+
+    const results: { email: string; sent: boolean; daysLeft: number }[] = [];
+
+    for (const user of usersToNotify) {
+      if (!user.subscriptionExpiry || !user.email) continue;
+
+      const daysLeft = Math.ceil(
+        (user.subscriptionExpiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      const sent = await sendSubscriptionExpiryReminder(
+        user.email,
+        user.name,
+        user.subscriptionExpiry,
+        daysLeft
+      );
+
+      results.push({ email: user.email, sent, daysLeft });
+    }
+
+    res.json({
+      message: `Notifiche inviate a ${results.filter(r => r.sent).length}/${results.length} utenti`,
+      results
+    });
+  } catch (error) {
+    console.error('Error sending notifications:', error);
+    res.status(500).json({ message: 'Errore durante l\'invio delle notifiche' });
   }
 });
 

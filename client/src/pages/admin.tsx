@@ -67,6 +67,7 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expiringData, setExpiringData] = useState<ExpiringData | null>(null);
   const [isBackingUp, setIsBackingUp] = useState(false);
+  const [isSendingNotifications, setIsSendingNotifications] = useState(false);
   
   // Dialog states
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -147,6 +148,29 @@ export default function AdminPage() {
       fetchExpiringSubscriptions();
     }
   }, [user]);
+
+  const handleSendNotifications = async () => {
+    setIsSendingNotifications(true);
+    try {
+      const res = await fetch('/api/admin/send-expiry-notifications', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast({ 
+          title: "Notifiche Inviate", 
+          description: data.message 
+        });
+      } else {
+        toast({ title: "Errore", description: data.message, variant: "destructive" });
+      }
+    } catch (error) {
+      toast({ title: "Errore", description: "Errore durante l'invio", variant: "destructive" });
+    } finally {
+      setIsSendingNotifications(false);
+    }
+  };
 
   if (!user || user.role !== 'admin') {
     return (
@@ -522,6 +546,19 @@ export default function AdminPage() {
         </TabsContent>
 
         <TabsContent value="expiring">
+          <div className="mb-6">
+            <Button 
+              onClick={handleSendNotifications}
+              disabled={isSendingNotifications}
+              className="bg-primary text-black font-bold"
+            >
+              {isSendingNotifications ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bell className="mr-2 h-4 w-4" />}
+              Invia Notifiche Email
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              Invia email di promemoria a tutti gli utenti con abbonamento in scadenza o scaduto negli ultimi 7 giorni.
+            </p>
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Scaduti */}
             <Card className="bg-card border-red-500/20">
