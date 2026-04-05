@@ -3,7 +3,7 @@ import User from './models/User';
 import Course from './models/Course';
 import Schedule from './models/Schedule';
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/gymcity';
+const MONGO_URI = process.env.MONGO_URI;
 
 const COURSES_DATA = [
   { name: 'Body Sculpt', description: 'Tonificazione completa per tutto il corpo.', intensity: 'media', color: 'bg-pink-500' },
