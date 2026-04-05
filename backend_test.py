@@ -7,6 +7,7 @@ Tests all endpoints according to the Italian gym booking system requirements
 import requests
 import sys
 import json
+import time
 from datetime import datetime, date, timedelta
 
 class GymCityAPITester:
@@ -366,9 +367,10 @@ class GymCityAPITester:
         if success1:
             print(f"   👥 Found {len(users_response) if users_response else 0} users")
         
-        # Test create new user
+        # Test create new user (unique email per run)
+        unique_email = f"test.user.{int(time.time())}@gymcity.com"
         new_user_data = {
-            "email": "test.user@gymcity.com",
+            "email": unique_email,
             "password": "test123",
             "name": "Test User",
             "phone": "1234567890",

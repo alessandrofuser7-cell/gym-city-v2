@@ -96,7 +96,7 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - SENDGRID_API_KEY
 
 ## Test Completati
-- [x] Backend: 95.2% (20/21 tests)
+- [x] Backend: 100% (21/21 tests) - Fix apr 2026: email unica per test idempotenti
 - [x] Frontend: 100%
 - [x] Mobile responsive: 100%
 
