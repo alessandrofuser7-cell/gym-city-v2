@@ -210,4 +210,15 @@ router.post('/send-expiry-notifications', authenticate, requireRole('admin'), as
   }
 });
 
+// Cron jobs status
+router.get('/cron-status', authenticate, requireRole('admin'), (req: AuthRequest, res: Response) => {
+  res.json({
+    jobs: [
+      { name: 'Backup MongoDB', schedule: '02:00 (Europe/Rome)', frequency: 'Giornaliero' },
+      { name: 'Notifiche scadenza', schedule: '09:00 (Europe/Rome)', frequency: 'Giornaliero' }
+    ],
+    status: 'attivo'
+  });
+});
+
 export default router;

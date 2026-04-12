@@ -6,6 +6,7 @@ import coursesRoutes from "./routes/courses";
 import scheduleRoutes from "./routes/schedule";
 import bookingsRoutes from "./routes/bookings";
 import adminRoutes from "./routes/admin";
+import { setupCronJobs } from "./jobs/cron-scheduler";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -13,6 +14,9 @@ export async function registerRoutes(
 ): Promise<Server> {
   // Connect to MongoDB
   await connectDB();
+
+  // Setup cron jobs (backup + notifiche)
+  setupCronJobs();
 
   // Register API routes
   app.use("/api/auth", authRoutes);

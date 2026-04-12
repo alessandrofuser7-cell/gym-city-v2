@@ -1,8 +1,9 @@
+import "dotenv/config";
 import mongoose from 'mongoose';
-import User from './models/User';
-import { sendSubscriptionExpiryReminder } from './services/email';
+import User from '../models/User';
+import { sendSubscriptionExpiryReminder } from '../services/email';
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/gymcity';
+const MONGO_URI = process.env.MONGO_URI;
 
 async function sendExpiryNotifications() {
   try {

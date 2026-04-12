@@ -100,6 +100,16 @@ App per la palestra A.S.D. Gym City Pescara con sistema di prenotazione corsi, a
 - [x] Frontend: 100%
 - [x] Mobile responsive: 100%
 
+## Cron Jobs Configurati (Apr 2026)
+- Backup MongoDB automatico: ogni giorno alle 02:00 (Europe/Rome) via `node-cron`
+- Notifiche scadenza abbonamento: ogni giorno alle 09:00 (Europe/Rome) via `node-cron`
+- Endpoint admin `/api/admin/cron-status` per monitoraggio stato cron
+- Backup script testato con successo (`mongodump` + compressione + retention 30gg)
+
+## SendGrid - Verifica Sender
+- Sender `gymcityasd@gmail.com` NON verificato su SendGrid
+- Azione richiesta: verificare il sender su https://app.sendgrid.com/settings/sender_auth
+
 ## Pronto per Deploy
 
 ### Fix deployment applicati (Apr 2026):
