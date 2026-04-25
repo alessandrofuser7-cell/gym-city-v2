@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Users, Calendar, Settings, PlusCircle, UserPlus, Edit, Trash2, 
   AlertTriangle, CheckCircle, XCircle, Search, Loader2, Save, X,
-  Download, Clock, Bell
+  Download, Clock, Bell, FileSpreadsheet
 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
@@ -170,6 +170,37 @@ export default function AdminPage() {
     } finally {
       setIsSendingNotifications(false);
     }
+  };
+
+  const handleExportCSV = () => {
+    if (!expiringData) return;
+
+    const rows: string[] = ['Nome,Email,Telefono,Scadenza,Stato,Giorni Rimanenti'];
+    
+    const addRows = (users: ExpiringUser[], stato: string) => {
+      users.forEach(u => {
+        const daysLeft = differenceInDays(new Date(u.subscriptionExpiry), new Date());
+        const expDate = format(new Date(u.subscriptionExpiry), 'dd/MM/yyyy');
+        rows.push(`"${u.name}","${u.email}","${u.phone || ''}","${expDate}","${stato}","${daysLeft}"`);
+      });
+    };
+
+    addRows(expiringData.expired, 'Scaduto');
+    addRows(expiringData.expiringIn7Days, 'Scade in 7gg');
+    addRows(expiringData.expiringIn30Days, 'Scade in 30gg');
+
+    const csvContent = rows.join('\n');
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `scadenze_abbonamenti_${format(new Date(), 'yyyy-MM-dd')}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    a.remove();
+
+    toast({ title: "CSV esportato", description: "File scadenze scaricato" });
   };
 
   if (!user || user.role !== 'admin') {
@@ -546,7 +577,7 @@ export default function AdminPage() {
         </TabsContent>
 
         <TabsContent value="expiring">
-          <div className="mb-6">
+          <div className="flex flex-wrap gap-3 mb-6">
             <Button 
               onClick={handleSendNotifications}
               disabled={isSendingNotifications}
@@ -555,10 +586,20 @@ export default function AdminPage() {
               {isSendingNotifications ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Bell className="mr-2 h-4 w-4" />}
               Invia Notifiche Email
             </Button>
-            <p className="text-xs text-muted-foreground mt-2">
-              Invia email di promemoria a tutti gli utenti con abbonamento in scadenza o scaduto negli ultimi 7 giorni.
-            </p>
+            <Button 
+              data-testid="export-csv-btn"
+              variant="outline"
+              className="border-white/10"
+              onClick={handleExportCSV}
+              disabled={!expiringData}
+            >
+              <FileSpreadsheet className="mr-2 h-4 w-4" />
+              Esporta CSV
+            </Button>
           </div>
+          <p className="text-xs text-muted-foreground mb-6">
+            Invia email di promemoria o esporta la lista scadenze in formato CSV.
+          </p>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Scaduti */}
             <Card className="bg-card border-red-500/20">

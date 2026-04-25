@@ -1,0 +1,60 @@
+{
+  "summary": "Comprehensive testing of new features: subscription expiry banner and admin CSV export. All features working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "✅ User login (mario.rossi@example.com) - subscription banner appears with yellow warning (8 days until expiry)",
+    "✅ Admin login (admin@gymcity.com) - NO subscription banner (correct behavior)",
+    "✅ Admin dashboard Scadenze tab shows 'Esporta CSV' button with FileSpreadsheet icon",
+    "✅ Admin dashboard Scadenze tab shows 3 columns: Scaduti, Scadono in 7 giorni, Scadono in 30 giorni",
+    "✅ Mario Rossi appears in 'Scadono in 30 giorni' column with correct expiry date",
+    "✅ Backend API /api/admin/expiring-subscriptions returns correct data structure",
+    "✅ Backend API /api/admin/cron-status returns active cron jobs",
+    "✅ Non-admin users correctly denied access to admin endpoints (403)"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_new_features.py"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_new_features.py"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7 tests passed)",
+    "frontend": "100% (all features verified)"
+  },
+  "test_credentials": {
+    "admin": "admin@gymcity.com / newadmin123 (password changed during test)",
+    "user": "mario.rossi@example.com / user123",
+    "note": "Admin has mustChangePassword=true, redirects to change-password on first login"
+  },
+  "seed_data_creation": "None - used existing seed data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Admin password was changed to 'newadmin123' during testing due to mustChangePassword=true. User mario.rossi has subscriptionExpiry ~7-8 days from now (2026-05-02), so the yellow warning banner appears. The subscription banner logic correctly shows: red for expired, amber for <=7 days, yellow for <=30 days, nothing for >30 days or non-users.",
+  "features_verified": {
+    "subscription_banner": {
+      "user_with_expiring_subscription": "Yellow banner shown: 'Il tuo abbonamento scade il 2 maggio 2026 (8 giorni). Pianifica il rinnovo.'",
+      "admin_no_subscription": "No banner shown (correct - admin has no subscription)",
+      "banner_styling": "Correct colors: yellow/warning for 8 days remaining"
+    },
+    "admin_csv_export": {
+      "button_present": "Yes - 'Esporta CSV' button with FileSpreadsheet icon",
+      "button_testid": "data-testid='export-csv-btn'",
+      "location": "Admin Dashboard > Scadenze tab"
+    },
+    "scadenze_tab_columns": {
+      "scaduti": "Red column - shows expired subscriptions",
+      "7_giorni": "Amber column - shows subscriptions expiring in 7 days",
+      "30_giorni": "Yellow column - shows subscriptions expiring in 30 days (Mario Rossi visible)"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useApp } from '@/lib/store';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,10 @@ import {
   User, 
   LogOut, 
   Menu, 
-  ShieldCheck 
+  ShieldCheck,
+  AlertTriangle,
+  Clock,
+  XCircle
 } from 'lucide-react';
 import {
   Sheet,
@@ -18,6 +21,51 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import logoImg from '@assets/palestra-gym-city-pescara_1769876975532.jpg';
+
+function SubscriptionBanner({ user }: { user: ReturnType<typeof useApp>['user'] }) {
+  const banner = useMemo(() => {
+    if (!user || user.role !== 'user' || !user.subscriptionExpiry) return null;
+    
+    const now = new Date();
+    const expiry = new Date(user.subscriptionExpiry);
+    const daysLeft = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const expiryFormatted = expiry.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    if (daysLeft < 0) {
+      return {
+        icon: <XCircle className="h-4 w-4 shrink-0" />,
+        text: `Il tuo abbonamento e' scaduto il ${expiryFormatted}. Passa in reception per rinnovare.`,
+        className: 'bg-red-500/15 border-red-500/30 text-red-400'
+      };
+    }
+    if (daysLeft <= 7) {
+      return {
+        icon: <AlertTriangle className="h-4 w-4 shrink-0" />,
+        text: `Il tuo abbonamento scade tra ${daysLeft} giorn${daysLeft === 1 ? 'o' : 'i'} (${expiryFormatted}). Ricordati di rinnovare!`,
+        className: 'bg-amber-500/15 border-amber-500/30 text-amber-400'
+      };
+    }
+    if (daysLeft <= 30) {
+      return {
+        icon: <Clock className="h-4 w-4 shrink-0" />,
+        text: `Il tuo abbonamento scade il ${expiryFormatted} (${daysLeft} giorni). Pianifica il rinnovo.`,
+        className: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400'
+      };
+    }
+    return null;
+  }, [user]);
+
+  if (!banner) return null;
+
+  return (
+    <div data-testid="subscription-banner" className={`border-b px-4 py-2.5 ${banner.className}`}>
+      <div className="container mx-auto flex items-center gap-2 text-sm">
+        {banner.icon}
+        <span>{banner.text}</span>
+      </div>
+    </div>
+  );
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useApp();
@@ -125,6 +173,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
+
+      {/* Subscription Expiry Banner */}
+      <SubscriptionBanner user={user} />
 
       {/* Main Content */}
       <main className="flex-1 relative">
